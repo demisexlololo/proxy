@@ -1,24 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const CORRECT_PASSWORD = 'KademLawliet0521@';
 const TARGET_URL = 'https://urbanmma.com/s?cache=1737225228';
 
 export default function Home() {
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // Update document title and meta to look legitimate
+  // Update document title
   useEffect(() => {
-    if (isAuthenticated) {
-      document.title = 'Urban MMA';
-    } else {
-      document.title = 'Lawliet Bypass';
-    }
-  }, [isAuthenticated]);
+    document.title = 'Lawliet Bypass';
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,45 +23,12 @@ export default function Home() {
     setError(null);
 
     if (password === CORRECT_PASSWORD) {
-      setIsAuthenticated(true);
+      window.location.href = TARGET_URL;
     } else {
       setError('Incorrect password! Please try again.');
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
-
-  if (isAuthenticated) {
-    return (
-      <div style={{
-        height: '100vh',
-        width: '100vw',
-        margin: 0,
-        padding: 0,
-        overflow: 'hidden',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-      }}>
-        <iframe
-          src={TARGET_URL}
-          style={{
-            width: '100%',
-            height: '100%',
-            border: 'none',
-            display: 'block',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-          }}
-          title="Urban MMA"
-          allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
-          referrerPolicy="no-referrer"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock"
-        />
-      </div>
-    );
-  }
 
   return (
     <div style={{
@@ -141,7 +105,7 @@ export default function Home() {
             onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
             onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {loading ? 'Logging in...' : 'Enter'}
+            {loading ? 'Redirecting...' : 'Enter'}
           </button>
         </form>
 
