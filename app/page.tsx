@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const CORRECT_PASSWORD = 'KademLawliet0521@';
-const TARGET_URL = 'https://daydreamx.global.ssl.fastly.net/';
+const TARGET_URL = 'https://urbanmma.com/s?cache=1737225228';
 
 export default function Home() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Update document title and meta to look legitimate
+  useEffect(() => {
+    if (isAuthenticated) {
+      document.title = 'Urban MMA';
+    } else {
+      document.title = 'Lawliet Bypass';
+    }
+  }, [isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +42,9 @@ export default function Home() {
         margin: 0,
         padding: 0,
         overflow: 'hidden',
+        position: 'fixed',
+        top: 0,
+        left: 0,
       }}>
         <iframe
           src={TARGET_URL}
@@ -41,9 +53,14 @@ export default function Home() {
             height: '100%',
             border: 'none',
             display: 'block',
+            position: 'absolute',
+            top: 0,
+            left: 0,
           }}
-          title="Lawliet Bypass"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+          title="Urban MMA"
+          allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+          referrerPolicy="no-referrer"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock"
         />
       </div>
     );
