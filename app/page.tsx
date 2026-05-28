@@ -4,96 +4,100 @@ import { useState } from 'react';
 
 export default function Home() {
   const [url, setUrl] = useState('');
+  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
     setLoading(true);
-    setError(null);
     
-    try {
-      // Simple redirect to the URL
-      window.location.href = url;
-    } catch (err) {
-      setError('Failed to open URL');
-    } finally {
-      setLoading(false);
+    // Make sure URL has https://
+    let finalUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      finalUrl = 'https://' + url;
     }
+    
+    setIframeUrl(finalUrl);
+    setLoading(false);
   };
 
   return (
     <div style={{
-      maxWidth: '800px',
-      margin: '0 auto',
-      padding: '40px 20px',
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
       fontFamily: 'Arial, sans-serif',
     }}>
-      <h1 style={{ color: '#333', marginBottom: '30px' }}>School Website Access</h1>
-      
       <div style={{
-        background: '#f5f5f5',
-        padding: '20px',
-        borderRadius: '8px',
-        marginBottom: '30px',
+        padding: '15px 20px',
+        background: '#333',
+        display: 'flex',
+        gap: '10px',
+        alignItems: 'center',
       }}>
-        <h3 style={{ marginTop: 0, color: '#0070f3' }}>Important Notes:</h3>
-        <ul style={{ color: '#666', lineHeight: '1.8' }}>
-          <li><strong>TikTok has very strong anti-bot systems</strong> and is hard to proxy</li>
-          <li>Many social media sites detect proxies and block them</li>
-          <li>Always follow your school's internet usage policies</li>
-        </ul>
+        <h1 style={{ color: 'white', margin: 0, fontSize: '20px' }}>Web Proxy</h1>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flex: 1, gap: '10px' }}>
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Enter website URL (e.g., https://www.wikipedia.org)"
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              fontSize: '14px',
+              border: 'none',
+              borderRadius: '4px',
+            }}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: '8px 20px',
+              fontSize: '14px',
+              background: '#0070f3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            {loading ? 'Loading...' : 'Go'}
+          </button>
+        </form>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: '30px' }}>
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="Enter website URL (e.g., https://www.wikipedia.org)"
+      {iframeUrl ? (
+        <iframe
+          src={iframeUrl}
           style={{
-            width: '100%',
-            padding: '12px 15px',
-            fontSize: '16px',
-            border: '2px solid #ddd',
-            borderRadius: '6px',
-            marginBottom: '10px',
-            boxSizing: 'border-box',
-          }}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            fontSize: '16px',
-            background: '#0070f3',
-            color: 'white',
+            flex: 1,
             border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
+            width: '100%',
           }}
-        >
-          {loading ? 'Opening...' : 'Open Website'}
-        </button>
-      </form>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      <div style={{
-        background: '#e3f2fd',
-        padding: '20px',
-        borderRadius: '8px',
-      }}>
-        <h4 style={{ color: '#1565c0', marginTop: 0 }}>Try These Alternatives:</h4>
-        <ul style={{ color: '#333', lineHeight: '1.8' }}>
-          <li>Educational sites usually work great</li>
-          <li>Wikipedia, Khan Academy, and other learning tools are good options</li>
-          <li>Ask your teacher about approved websites for your school</li>
-        </ul>
-      </div>
+          title="Proxied Website"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+        />
+      ) : (
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '40px',
+          background: '#f5f5f5',
+        }}>
+          <h2 style={{ color: '#333', marginBottom: '20px' }}>Enter a URL above to get started!</h2>
+          <p style={{ color: '#666', marginBottom: '30px', textAlign: 'center' }}>
+            Note: Many websites (like TikTok, Instagram) block being loaded in iframes due to security policies.
+            <br />
+            Educational websites usually work great!
+          </p>
+        </div>
+      )}
     </div>
   );
 }
