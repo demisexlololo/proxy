@@ -3,9 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const CORRECT_PASSWORD = 'KademLawliet0521@';
-const TARGET_URL = 'https://urbanmma.com/s?cache=1737225228';
-
 export default function Home() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -17,15 +14,29 @@ export default function Home() {
     document.title = 'Lawliet Bypass';
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    if (password === CORRECT_PASSWORD) {
-      window.location.href = TARGET_URL;
-    } else {
-      setError('Incorrect password! Please try again.');
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Redirect to the urbanmma path on our own domain
+        window.location.href = '/s?cache=1737225228';
+      } else {
+        setError(data.error || 'Login failed');
+      }
+    } catch (err) {
+      setError('Login failed');
+    } finally {
       setLoading(false);
     }
   };
@@ -105,7 +116,7 @@ export default function Home() {
             onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
             onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {loading ? 'Redirecting...' : 'Enter'}
+            {loading ? 'Logging in...' : 'Enter'}
           </button>
         </form>
 
