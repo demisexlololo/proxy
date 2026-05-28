@@ -1,13 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/:path*',
-        destination: 'https://www.tiktok.com/:path*',
-      },
-    ];
-  },
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
