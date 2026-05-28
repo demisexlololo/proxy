@@ -1,16 +1,13 @@
-import type { Metadata } from "next";
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "Proxy App",
-  description: "Access restricted websites",
+export const metadata = {
+  title: 'School Proxy',
+  description: 'Access websites at school',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body>{children}</body>
