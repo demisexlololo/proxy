@@ -2,102 +2,141 @@
 
 import { useState } from 'react';
 
+const CORRECT_PASSWORD = 'KademLawliet0521@';
+const TARGET_URL = 'https://daydreamx.global.ssl.fastly.net/';
+
 export default function Home() {
-  const [url, setUrl] = useState('');
-  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url) return;
     setLoading(true);
-    
-    // Make sure URL has https://
-    let finalUrl = url;
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      finalUrl = 'https://' + url;
+    setError(null);
+
+    if (password === CORRECT_PASSWORD) {
+      setIsAuthenticated(true);
+    } else {
+      setError('Incorrect password! Please try again.');
     }
     
-    setIframeUrl(finalUrl);
     setLoading(false);
   };
 
+  if (isAuthenticated) {
+    return (
+      <div style={{
+        height: '100vh',
+        width: '100vw',
+        margin: 0,
+        padding: 0,
+        overflow: 'hidden',
+      }}>
+        <iframe
+          src={TARGET_URL}
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            display: 'block',
+          }}
+          title="Lawliet Bypass"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+        />
+      </div>
+    );
+  }
+
   return (
     <div style={{
-      height: '100vh',
+      minHeight: '100vh',
       display: 'flex',
-      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       fontFamily: 'Arial, sans-serif',
+      padding: '20px',
     }}>
       <div style={{
-        padding: '15px 20px',
-        background: '#333',
-        display: 'flex',
-        gap: '10px',
-        alignItems: 'center',
+        background: 'white',
+        padding: '40px 30px',
+        borderRadius: '12px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+        width: '100%',
+        maxWidth: '400px',
       }}>
-        <h1 style={{ color: 'white', margin: 0, fontSize: '20px' }}>Web Proxy</h1>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flex: 1, gap: '10px' }}>
+        <h1 style={{
+          color: '#333',
+          textAlign: 'center',
+          marginBottom: '30px',
+          fontSize: '28px',
+        }}>
+          Welcome to Lawliet Bypass
+        </h1>
+
+        <form onSubmit={handleLogin} style={{ marginBottom: '20px' }}>
+          <label style={{
+            display: 'block',
+            marginBottom: '8px',
+            color: '#555',
+            fontSize: '14px',
+            fontWeight: 'bold',
+          }}>
+            Enter Password:
+          </label>
           <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Enter website URL (e.g., https://www.wikipedia.org)"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password here..."
             style={{
-              flex: 1,
-              padding: '8px 12px',
-              fontSize: '14px',
-              border: 'none',
-              borderRadius: '4px',
+              width: '100%',
+              padding: '14px 16px',
+              fontSize: '16px',
+              border: '2px solid #ddd',
+              borderRadius: '8px',
+              marginBottom: '10px',
+              boxSizing: 'border-box',
+              outline: 'none',
+              transition: 'border-color 0.2s',
             }}
+            onFocus={(e) => e.target.style.borderColor = '#667eea'}
+            onBlur={(e) => e.target.style.borderColor = '#ddd'}
           />
+          {error && <p style={{ color: '#e74c3c', marginBottom: '20px', fontSize: '14px' }}>{error}</p>}
           <button
             type="submit"
             disabled={loading}
             style={{
-              padding: '8px 20px',
-              fontSize: '14px',
-              background: '#0070f3',
+              width: '100%',
+              padding: '14px',
+              fontSize: '16px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '8px',
               cursor: 'pointer',
+              fontWeight: 'bold',
+              transition: 'transform 0.2s',
             }}
+            onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+            onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            {loading ? 'Loading...' : 'Go'}
+            {loading ? 'Logging in...' : 'Enter'}
           </button>
         </form>
-      </div>
 
-      {iframeUrl ? (
-        <iframe
-          src={iframeUrl}
-          style={{
-            flex: 1,
-            border: 'none',
-            width: '100%',
-          }}
-          title="Proxied Website"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-        />
-      ) : (
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '40px',
-          background: '#f5f5f5',
+        <p style={{
+          color: '#888',
+          fontSize: '12px',
+          textAlign: 'center',
+          margin: 0,
         }}>
-          <h2 style={{ color: '#333', marginBottom: '20px' }}>Enter a URL above to get started!</h2>
-          <p style={{ color: '#666', marginBottom: '30px', textAlign: 'center' }}>
-            Note: Many websites (like TikTok, Instagram) block being loaded in iframes due to security policies.
-            <br />
-            Educational websites usually work great!
-          </p>
-        </div>
-      )}
+          Secure access only
+        </p>
+      </div>
     </div>
   );
 }
